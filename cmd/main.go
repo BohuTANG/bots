@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"os"
 
 	"net/http"
 
 	"github.com/go-playground/webhooks/v6/github"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -13,7 +14,11 @@ const (
 )
 
 func main() {
-	hook, _ := github.New(github.Options.Secret("MyGitHubSuperSecretSecrect...?"))
+	token, found := os.LookupEnv("GITHUB_TOKEN")
+	if !found {
+		log.Fatal("Missing input 'GITHUB_TOKEN' env.")
+	}
+	hook, _ := github.New(github.Options.Secret(token))
 
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		payload, err := hook.Parse(r, github.ReleaseEvent, github.PullRequestEvent)
@@ -26,13 +31,11 @@ func main() {
 
 		case github.ReleasePayload:
 			release := payload.(github.ReleasePayload)
-			// Do whatever you want from here...
-			fmt.Printf("%+v", release)
+			log.Infof("%+v", release)
 
 		case github.PullRequestPayload:
 			pullRequest := payload.(github.PullRequestPayload)
-			// Do whatever you want from here...
-			fmt.Printf("%+v", pullRequest)
+			log.Infof("%+v", pullRequest)
 		}
 	})
 	http.ListenAndServe(":3000", nil)
