@@ -32,7 +32,8 @@ labels:
   'pr-improvement':
     include:
       - '\bImprovement?\b'
-    exclude: []
+    exclude:
+      - '\bPerformance Improvement?\b'
   'pr-performance':
     include:
       - '\bPerformance Improvement?\b'

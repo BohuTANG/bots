@@ -6,6 +6,8 @@
 *.dylib
 *.test
 *.out
+*.ini
+fusebots
 
 ### Go Patch ###
 /vendor/
